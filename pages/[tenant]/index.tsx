@@ -1,9 +1,11 @@
+import { Banner } from '../../components/Banner';
 import { SearchInput } from '../../components/SearchInput';
 import styles from '../../styles/Home.module.css';
 
 const Home = () => {
     const handleSearch = (searchValue: string) =>{}
     return(
+        /*Essa primeira parte, cuida do cabeçalho*/
         <div className= {styles.container}>
             <header className= {styles.header}>
                 <div className= {styles.headerTop}>
@@ -32,7 +34,7 @@ const Home = () => {
                     />
                 </div>
             </header>
-           
+            <Banner/>
         </div>
     )
 }
