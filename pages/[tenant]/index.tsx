@@ -1,11 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { GetServerSideProps } from 'next';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Banner } from '../../components/Banner';
 import { ProductItem } from '../../components/ProductItem';
 import { SearchInput } from '../../components/SearchInput';
 import { useAppContext } from '../../contexts/AppContext';
-import { useApi } from '../../libs/useApi';
+import { UseApi } from '../../libs/UseApi';
 import styles from '../../styles/Home.module.css';
+import { Product } from '../../types/Product';
 import { Tenant } from '../../types/Tenant';
 
 const Home = (data: Props) => {
@@ -15,6 +17,7 @@ const Home = (data: Props) => {
         setTenant(data.tenant);
     }, []);
 
+    const [products, setProducts] = useState<Product[]>(data.products);
 
     const handleSearch = (searchValue: string) => { }
     return (
@@ -24,7 +27,7 @@ const Home = (data: Props) => {
                 <div className={styles.headerTop}>
                     <div className={styles.headTopLeft}>
                         <div className={styles.headerTitle}>
-                            Seja Bem Vindo (a)👋
+                            Seja Bem Vindo(a)👋
                         </div>
                         <div className={styles.headerSubtitle}>
                             O que deseja para hoje?
@@ -48,21 +51,12 @@ const Home = (data: Props) => {
             </header>
             <Banner />
             <div className={styles.grid}>
-                <ProductItem
-                    data={{ id: 1, image: '/temp/burger.png', categoryName: 'Tradicional', name: 'Texas Burger', price: 'R$ 25,50' }}
-
-
-                />
-                <ProductItem
-                    data={{ id: 2, image: '/temp/burger.png', categoryName: 'Tradicional', name: 'Texas Burger', price: 'R$ 25,50' }}
-
-
-                />
-                <ProductItem
-                    data={{ id: 3, image: '/temp/burger.png', categoryName: 'Tradicional', name: 'Texas Burger', price: 'R$ 25,50' }}
-
-
-                />
+                {products.map((item, index) =>
+                    <ProductItem
+                    key = {index}
+                    data = {item}
+                    />
+                )}
 
             </div>
         </div>
@@ -73,21 +67,26 @@ export default Home;
 
 type Props = {
     tenant: Tenant
+    products: Product[]
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { tenant: tenantSlug } = context.query;
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const api = useApi();
+    
+    const api = UseApi(tenantSlug as string);
 
     //Get Tenant
-    const tenant = await api.getTenant(tenantSlug as string);
+    const tenant = await api.getTenant();
     if (!tenant) {
         return { redirect: { destination: '/', permanent: false } }
     }
+    //Get Products
+    const products = await api.getAllProducts();
+
     return {
         props: {
-            tenant
+            tenant,
+            products
         }
     }
 

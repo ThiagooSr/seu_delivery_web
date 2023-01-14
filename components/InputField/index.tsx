@@ -20,7 +20,7 @@ export const InputField = ({color, placeholder, value, onChange, password}: Prop
     return (
         <div className= {styles.container}
             style={{
-                borderColor: focused ? color : '#F9F9FB',
+                borderColor: focused ? color : '#d5d5de',
                 backgroundColor: focused ? '#FFF' : '#F9F9FB',
         }}
         >
