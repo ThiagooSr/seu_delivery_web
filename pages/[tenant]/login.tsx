@@ -17,11 +17,11 @@ const Login = (data: Props) => {
 
     useEffect(() => {
         setTenant(data.tenant);
-    
-  
+
+
     }, []);
 
-    const router =useRouter ();
+    const router = useRouter();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -44,10 +44,10 @@ const Login = (data: Props) => {
 
             <div className={styles.header}>{data.tenant.name}</div>
 
-            <div 
+            <div
                 className={styles.subtitle}
-                style={{borderBottomColor: data.tenant.mainColor}}
-                >Use suas credenciais para realizar o login.</div>
+                style={{ borderBottomColor: data.tenant.mainColor }}
+            >Use suas credenciais para realizar o login.</div>
 
             <div className={styles.line}></div>
 
@@ -82,10 +82,10 @@ const Login = (data: Props) => {
                 </div>
             </div>
             <div className={styles.forgetArea}
-                style={{borderBottomColor: data.tenant.mainColor}}
+                style={{ borderBottomColor: data.tenant.mainColor }}
             >
-                    Esqueceu sua senha? <Link href={`/${data.tenant.slug}/forget`}>
-                    <a style={{ color: data.tenant.mainColor}}>Clique aqui</a></Link>
+                Esqueceu sua senha? <Link href={`/${data.tenant.slug}/forget`}>
+                    <a style={{ color: data.tenant.mainColor }}>Clique aqui</a></Link>
             </div>
             <div className={styles.line}></div>
 
@@ -95,7 +95,7 @@ const Login = (data: Props) => {
                     color={data.tenant.mainColor}
                     label="Quero me cadastrar"
                     onClick={handleSignup}
-                    
+
                 ></Button>
             </div>
         </div>
@@ -111,21 +111,20 @@ type Props = {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { tenant: tenantSlug } = context.query;
 
-    const api = UseApi();
+    const api = UseApi(tenantSlug as string);
 
     //Get Tenant
-    const tenant = await api.getTenant(tenantSlug as string);
+    const tenant = await api.getTenant();
     if (!tenant) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false
-            }
-        }
+        return { redirect: { destination: '/', permanent: false } }
     }
+    //Get Products
+    const products = await api.getAllProducts();
+
     return {
         props: {
-            tenant
+            tenant,
+            products
         }
     }
 

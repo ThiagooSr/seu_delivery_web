@@ -82,21 +82,20 @@ type Props = {
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { tenant: tenantSlug } = context.query;
 
-    const api = UseApi();
+    const api = UseApi(tenantSlug as string);
 
     //Get Tenant
-    const tenant = await api.getTenant(tenantSlug as string);
+    const tenant = await api.getTenant();
     if (!tenant) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false
-            }
-        }
+        return { redirect: { destination: '/', permanent: false } }
     }
+    //Get Products
+    const products = await api.getAllProducts();
+
     return {
         props: {
-            tenant
+            tenant,
+            products
         }
     }
 
